@@ -1,0 +1,33 @@
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /Fortnite.com/Teams }
+using { /Fortnite.com/Game }
+using { /Fortnite.com/Characters }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+
+# This code is a UEFN Fortnite "Device" for managing a Gun Game feature
+# where players fight online and get a new weapon after each elimination
+
+# A Verse-authored creative device that can be placed in a level
+game_manager := class(creative_device):
+
+    var PlayerMap : [player]int = map{}
+
+    @editable
+    var WeaponGranters : []item_granter_device = array{}
+
+    OnBegin<override>()<suspends>:void=
+
+        InitPlayers()
+
+    InitPlayers() : void=
+        AllPlayers := GetPlayspace().GetPlayers()
+        for (Player : AllPlayers, FortCharacter := Player.GetFortCharacter[]):
+            if (set PlayerMap[Player] = 0, StartWeapon := PlayerMap[Player]):
+                GrantWeapon(Player, StartWeapon)
+                
+    GrantWeapon(Player : player, WeaponTier: int) : void=
+        Print("Attempting to grant weapon")
+        if (ItemGranter := WeaponGranters[WeaponTier]):
+            Print("Granted item to player")
+            ItemGranter.GrantItem(Player)
